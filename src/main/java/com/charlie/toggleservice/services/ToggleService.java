@@ -8,6 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -36,5 +37,14 @@ public class ToggleService {
     public FeatureToggle toggle(FeatureToggle featureToggle) {
         featureToggle.toggle();
         return toggleRepository.save(featureToggle);
+    }
+
+    public void toggleExistingTogglesIfChanged(List<FeatureToggle> toggles) {
+        for (FeatureToggle feature : toggles) {
+            Optional<FeatureToggle> existingToggle = toggleRepository.findById(feature.getName());
+            if (existingToggle.isPresent() && existingToggle.get().isActive() != feature.isActive()) {
+                toggle(feature);
+            }
+        }
     }
 }

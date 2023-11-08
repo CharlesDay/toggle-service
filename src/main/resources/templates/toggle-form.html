@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Toggle Management</title>
+</head>
+<body>
+<h1>Toggle Management</h1>
+
+<!-- Toggle Form for Existing Toggles -->
+<form action="/toggle" method="post">
+    <h2>Manage Existing Toggles</h2>
+    <ul>
+        <li th:each="existingToggle : ${toggles}">
+            <label for="toggleName" th:text="${existingToggle.name}"></label>
+            <input type="checkbox" id="toggleName" name="toggleNames" th:value="${existingToggle.name}" th:checked="${existingToggle.active}" />
+            <button type="button" th:attr="data-toggle-name=${existingToggle.name}" onclick="toggleToggle(this)">Toggle</button>
+            <br />
+        </li>
+    </ul>
+</form>
+
+<script>
+    function toggleToggle(button) {
+        var toggleName = button.getAttribute("data-toggle-name");
+        var checkbox = document.querySelector('input[name="toggleNames"][value="' + toggleName + '"]');
+
+        // Toggle the checkbox (check if unchecked, uncheck if checked)
+        checkbox.checked = !checkbox.checked;
+
+        // Send an AJAX request to update the toggle
+        var formData = new FormData();
+        formData.append("name", toggleName);
+        formData.append("active", checkbox.checked);
+
+        fetch("/toggle", {
+            method: "POST",
+            body: formData,
+        });
+    }
+</script>
+
+
+
+
+
+
+<!-- Form for Creating New Toggles -->
+<!--<form action="/createToggle" method="post" th:object="${featureToggle}">-->
+<!--    <h2>Create New Toggle</h2>-->
+<!--    <label for="newToggleName">Toggle Name:</label>-->
+<!--    <input type="text" id="newToggleName" name="newToggleName" th:field="*{name}" />-->
+
+<!--    <label for="newToggleStatus">Toggle Status:</label>-->
+<!--    <input type="checkbox" id="newToggleStatus" name="newToggleStatus" th:checked="*{active}" />-->
+
+<!--    <button type="submit">Create Toggle</button>-->
+<!--</form>-->
+
+</body>
+</html>
