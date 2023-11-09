@@ -26,7 +26,7 @@ public class ToggleController {
     @GetMapping("/{name}")
     public ResponseEntity<?> getToggle(@PathVariable("name") String name) {
         FeatureToggle toggleOptional = toggleService.findByName(name);
-        if (toggleOptional != null){
+        if (toggleOptional == null){
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("There is no toggle matching that name");
         }
 
