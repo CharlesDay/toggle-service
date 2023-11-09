@@ -11,9 +11,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
-import java.util.List;
 import java.util.Optional;
 
 @Controller
@@ -27,44 +29,16 @@ public class ToggleController {
     @Autowired
     ToggleService toggleService;
 
-//    @PostMapping
-//    public ResponseEntity<?> createToggle(@RequestBody FeatureToggleCreateRequest createRequest) {
-//        FeatureToggle toggle = toggleService.createToggle(createRequest);
-//
-//        if (toggleService == null) {
-//            return ResponseEntity.internalServerError().build();
-//        }
-//
-//        return ResponseEntity.status(HttpStatus.CREATED).body(toggle);
-//    }
-//
-//    @PatchMapping("/{name}")
-//    public ResponseEntity<?> toggle(@PathVariable String name) {
-//        Optional<FeatureToggle> toggleById = toggleRepository.findById(name);
-//        if (toggleById.isEmpty()){
-//            return ResponseEntity.notFound().build();
-//        }
-//        return ResponseEntity.ok().body(toggleService.toggle(toggleById.get()));
-//    }
-//
-//    @GetMapping("/{name}")
-//    public ResponseEntity<?> getToggle(@PathVariable String name) {
-//        Optional<FeatureToggle> toggleById = toggleRepository.findById(name);
-//        if (toggleById.isEmpty()){
-//            return ResponseEntity.notFound().build();
-//        }
-//        return ResponseEntity.ok().body(toggleById.get());
-//    }
-//
-//    @DeleteMapping("/{name}")
-//    public ResponseEntity<?> deleteToggle(@PathVariable String name) {
-//        if (toggleRepository.existsById(name)) {
-//            toggleRepository.deleteById(name);
-//            return ResponseEntity.ok().build();
-//        }
-//
-//        return ResponseEntity.notFound().build();
-//    }
+    @GetMapping
+    public ResponseEntity<?> getToggle(String name) {
+        Optional<FeatureToggle> toggleOptional = toggleRepository.findById(name);
+        if (toggleOptional.isEmpty()){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("There is no toggle matching that name");
+        }
+
+        return ResponseEntity.ok().body(toggleOptional.get());
+    }
+
 
     @GetMapping("/toggle")
     public String toggleForm(Model model) {
@@ -74,16 +48,27 @@ public class ToggleController {
     }
 
     @PostMapping("/toggle")
-    public String toggleExistingToggles(@RequestParam("toggleNames") List<FeatureToggle> toggleNames) {
-        // Toggle existing toggles based on the list of toggle names received
-        toggleService.toggleExistingTogglesIfChanged(toggleNames);
-        return "redirect:/toggle";
+    public String toggleSpecificToggle(@RequestParam("specificToggleName") String toggleName) {
+        // Find the toggle with the specified name
+        Optional<FeatureToggle> toggle = toggleService.getToggleById(toggleName);
+
+        toggle.ifPresent(featureToggle -> toggleService.toggle(featureToggle));
+
+        return "redirect:/toggle"; // Redirect back to the toggle form
     }
 
-    @PostMapping("/createToggle")
-    public String createNewToggle(@ModelAttribute("featureToggle") FeatureToggle featureToggle) {
-        FeatureToggleCreateRequest featureToggleCreateRequest = new FeatureToggleCreateRequest(featureToggle.getName(), featureToggle.isActive());
-        // Create a new toggle in the backend based on the form submission
+    @PostMapping("/deleteToggle")
+    public String deleteToggle(@RequestParam("specificToggleNameToDelete") String specificToggleNameToDelete) {
+        if (toggleRepository.existsById(specificToggleNameToDelete)) {
+            toggleRepository.deleteById(specificToggleNameToDelete);
+        }
+
+        return "redirect:/toggle"; // Redirect back to the toggle form
+    }
+
+@PostMapping("/createToggle")
+    public String createNewToggle(@RequestParam("newToggleName") String toggleName, @Nullable @RequestParam("newToggleStatus") boolean active) {
+        FeatureToggleCreateRequest featureToggleCreateRequest = new FeatureToggleCreateRequest(toggleName, active);
         toggleService.createToggle(featureToggleCreateRequest);
         return "redirect:/toggle"; // Redirect back to the toggle form
     }
