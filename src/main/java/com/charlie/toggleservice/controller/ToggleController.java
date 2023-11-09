@@ -10,6 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -62,8 +63,10 @@ public class ToggleController {
 
 @PostMapping("/createToggle")
     public String createNewToggle(@RequestParam("newToggleName") String toggleName, @Nullable @RequestParam("newToggleStatus") boolean active) {
-        FeatureToggleCreateRequest featureToggleCreateRequest = new FeatureToggleCreateRequest(toggleName, active);
-        toggleService.createToggle(featureToggleCreateRequest);
+        if (StringUtils.hasText(toggleName)){
+            FeatureToggleCreateRequest featureToggleCreateRequest = new FeatureToggleCreateRequest(toggleName, active);
+            toggleService.createToggle(featureToggleCreateRequest);
+        }
         return "redirect:/toggle"; // Redirect back to the toggle form
     }
 }
