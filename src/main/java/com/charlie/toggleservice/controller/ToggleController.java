@@ -11,10 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
@@ -26,8 +23,8 @@ public class ToggleController {
     @Autowired
     ToggleService toggleService;
 
-    @GetMapping
-    public ResponseEntity<?> getToggle(String name) {
+    @GetMapping("/{name}")
+    public ResponseEntity<?> getToggle(@PathVariable("name") String name) {
         FeatureToggle toggleOptional = toggleService.findByName(name);
         if (toggleOptional != null){
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("There is no toggle matching that name");

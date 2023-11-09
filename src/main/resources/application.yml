@@ -1,9 +1,8 @@
 spring:
+  main:
+    allow-bean-definition-overriding: true
   cache:
     type: simple
-  redis:
-    database: 0
-    host: localhost
-    username: ""
-    password: ""
-    port: 6379
+  autoconfigure:
+    exclude:
+      - org.springframework.boot.autoconfigure.data.redis.RedisAutoConfiguration
