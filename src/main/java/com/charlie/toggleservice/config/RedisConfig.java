@@ -15,8 +15,6 @@ import org.springframework.data.redis.serializer.StringRedisSerializer;
 @Configuration
 @EnableCaching
 @EnableRedisRepositories
-@ConditionalOnProperty(value = "spring.cache.type", havingValue = "redis")
-@Import(RedisAutoConfiguration.class)
 public class RedisConfig {
 
     @Bean

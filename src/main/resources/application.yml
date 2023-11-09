@@ -1,8 +1,11 @@
 spring:
-  main:
-    allow-bean-definition-overriding: true
   cache:
-    type: simple
-  autoconfigure:
-    exclude:
-      - org.springframework.boot.autoconfigure.data.redis.RedisAutoConfiguration
+    type: redis
+  data:
+    redis:
+      database: 0
+      host: toggle-service.redis.cache.windows.net
+      password: ${REDIS_PRIMARY_PASSWORD}
+      port: 6380
+      ssl:
+        enabled: true
