@@ -70,6 +70,8 @@
         th {
             background-color: #007BFF;
             color: #fff;
+            position: sticky;
+            top: 0;
         }
 
         .green {
@@ -79,14 +81,20 @@
         .red {
             color: red;
         }
+
+        .table-container {
+            max-height: 300px; /* Adjust the height as needed */
+            overflow-y: auto;
+        }
+
     </style>
 </head>
 <body>
 <h1>Toggle Management</h1>
 
-<!-- Toggle Form for Existing Toggles -->
 <form action="/toggle" method="post">
     <h2>Existing Toggles</h2>
+    <div class="table-container">
     <table>
         <thead>
         <tr>
@@ -95,18 +103,21 @@
         </tr>
         </thead>
         <tbody>
-        <tr th:each="existingToggle : ${toggles}">
+        <tr th:each="existingToggle, iterStat : ${toggles}">
             <td th:text="${existingToggle.name}"></td>
             <td th:text="${existingToggle.active} ? 'Yes' : 'No'" th:class="${existingToggle.active} ? 'green' : 'red'"></td>
         </tr>
         </tbody>
     </table>
+    </div>
     <br>
 
     <h2>Toggle a Feature</h2>
     <label for="specificToggleName">Toggle Name:</label>
     <input type="text" id="specificToggleName" name="specificToggleName" />
     <button type="submit">Toggle</button>
+
+
 </form>
 
 <form action="/deleteToggle" method="post">

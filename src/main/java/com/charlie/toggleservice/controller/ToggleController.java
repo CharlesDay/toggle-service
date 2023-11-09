@@ -2,7 +2,6 @@ package com.charlie.toggleservice.controller;
 
 import com.charlie.toggleservice.model.FeatureToggle;
 import com.charlie.toggleservice.model.FeatureToggleCreateRequest;
-import com.charlie.toggleservice.repositories.ToggleRepository;
 import com.charlie.toggleservice.services.ToggleService;
 import jakarta.annotation.Nullable;
 import lombok.extern.slf4j.Slf4j;
@@ -16,33 +15,30 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.util.List;
 import java.util.Optional;
 
 @Controller
 @RequestMapping()
 @Slf4j
 public class ToggleController {
-
-    @Autowired
-    ToggleRepository toggleRepository;
-
     @Autowired
     ToggleService toggleService;
 
     @GetMapping
     public ResponseEntity<?> getToggle(String name) {
-        Optional<FeatureToggle> toggleOptional = toggleRepository.findById(name);
-        if (toggleOptional.isEmpty()){
+        FeatureToggle toggleOptional = toggleService.findByName(name);
+        if (toggleOptional != null){
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("There is no toggle matching that name");
         }
 
-        return ResponseEntity.ok().body(toggleOptional.get());
+        return ResponseEntity.ok().body(toggleOptional);
     }
 
 
     @GetMapping("/toggle")
     public String toggleForm(Model model) {
-        Iterable<FeatureToggle> toggles = toggleRepository.findAll();
+        List<FeatureToggle> toggles = toggleService.findAll();
         model.addAttribute("toggles", toggles);
         return "toggle-form";
     }
@@ -59,9 +55,7 @@ public class ToggleController {
 
     @PostMapping("/deleteToggle")
     public String deleteToggle(@RequestParam("specificToggleNameToDelete") String specificToggleNameToDelete) {
-        if (toggleRepository.existsById(specificToggleNameToDelete)) {
-            toggleRepository.deleteById(specificToggleNameToDelete);
-        }
+        toggleService.deleteIfExists(specificToggleNameToDelete);
 
         return "redirect:/toggle"; // Redirect back to the toggle form
     }
