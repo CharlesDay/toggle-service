@@ -1,6 +1,6 @@
 spring:
   cache:
-    type: simple
+    type: redis
   redis:
     database: 0
     host: localhost

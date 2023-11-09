@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 
 import java.io.Serializable;
 
-@Cacheable(value = "Toggle")
+@Cacheable("Toggle")
 @RedisHash("Toggles")
 @Builder
 @Getter
