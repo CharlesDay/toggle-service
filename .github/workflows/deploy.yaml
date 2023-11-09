@@ -6,8 +6,6 @@ env:
 
 on:
   push:
-    branches:
-      - main
 
 jobs:
   build:
@@ -20,6 +18,7 @@ jobs:
         uses: actions/setup-java@v3
         with:
           java-version: ${{ env.JAVA_VERSION }}
+          distribution: 'adopt'
           cache: 'maven'
 
       - name: Build with Maven
