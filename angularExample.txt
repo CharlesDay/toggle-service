@@ -1,0 +1,119 @@
+import { Component, OnInit } from '@angular/core';
+import { ToggleService } from './toggle.service'; // Import your Angular service for communication with the backend
+
+@Component({
+  selector: 'app-toggle-management',
+  templateUrl: './toggle-management.component.html',
+  styleUrls: ['./toggle-management.component.css']
+})
+export class ToggleManagementComponent implements OnInit {
+  toggles: any[] = []; // You should define a proper type for toggles
+
+  specificToggleName: string = '';
+  specificToggleNameToDelete: string = '';
+  newToggleName: string = '';
+  newToggleStatus: boolean = false;
+
+  constructor(private toggleService: ToggleService) { }
+
+  ngOnInit(): void {
+    this.getToggles();
+  }
+
+  getToggles(): void {
+    // Call your service to fetch toggles from the backend
+    this.toggleService.getToggles()
+      .subscribe(toggles => this.toggles = toggles);
+  }
+
+  toggleFeature(): void {
+    // Call your service to toggle a feature
+    this.toggleService.toggleFeature(this.specificToggleName)
+      .subscribe(() => {
+        // Refresh the toggles after toggling
+        this.getToggles();
+      });
+  }
+
+  deleteToggle(): void {
+    // Call your service to delete a toggle
+    this.toggleService.deleteToggle(this.specificToggleNameToDelete)
+      .subscribe(() => {
+        // Refresh the toggles after deletion
+        this.getToggles();
+      });
+  }
+
+  createToggle(): void {
+    // Call your service to create a new toggle
+    this.toggleService.createToggle(this.newToggleName, this.newToggleStatus)
+      .subscribe(() => {
+        // Refresh the toggles after creation
+        this.getToggles();
+      });
+  }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h1>Toggle Management</h1>
+
+<h2>Existing Toggles</h2>
+<div class="table-container">
+  <table>
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Active</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let existingToggle of toggles">
+        <td>{{ existingToggle.name }}</td>
+        <td [ngClass]="existingToggle.active ? 'green' : 'red'">{{ existingToggle.active ? 'Yes' : 'No' }}</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<br>
+
+<h2>Toggle a Feature</h2>
+<div style="display: flex; align-items: center;">
+  <label for="specificToggleName" style="margin-right: 10px;">Name:</label>
+  <input type="text" id="specificToggleName" [(ngModel)]="specificToggleName" style="margin-right: 10px;"/>
+  <button type="button" (click)="toggleFeature()">Toggle</button>
+</div>
+
+<h2>Delete Feature Toggle</h2>
+<div style="display: flex; align-items: center;">
+  <label for="specificToggleNameToDelete" style="margin-right: 10px;">Name:</label>
+  <input type="text" id="specificToggleNameToDelete" [(ngModel)]="specificToggleNameToDelete" style="margin-right: 10px;" />
+  <button type="button" (click)="deleteToggle()">Delete</button>
+</div>
+
+<h2>Create New Toggle</h2>
+<div style="display: flex; align-items: center;">
+  <label for="newToggleName" style="margin-right: 10px;">Name:</label>
+  <input type="text" id="newToggleName" [(ngModel)]="newToggleName" style="margin-right: 10px;" />
+
+  <label for="newToggleStatus" style="margin-right: 10px;">Active</label>
+  <input type="checkbox" id="newToggleStatus" [(ngModel)]="newToggleStatus" style="margin-right: 10px;" />
+  <button type="button" (click)="createToggle()">Create</button>
+</div>
