@@ -27,7 +27,7 @@ public class ToggleController {
         this.toggleService = toggleService;
     }
 
-    @GetMapping("/{name}")
+    @GetMapping("/toggles/{name}")
     public ResponseEntity<?> getToggle(@PathVariable("name") String name) {
         FeatureToggle toggle = toggleService.findByName(name);
         if (toggle == null) {

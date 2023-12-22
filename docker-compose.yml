@@ -1,12 +1,54 @@
 version: '3'
+networks:
+  bridge:
+    driver: bridge
 services:
   redis:
     image: redislabs/redismod
     ports:
-      - 6379:6379
+      - "6379:6379"
   redisinsight:
     image: redislabs/redisinsight:latest
     ports:
       - '8001:8001'
     volumes:
       - ./Users/charlie/data/redisinsight:/db
+  prometheus:
+    networks:
+      - bridge
+    image: prom/prometheus
+    container_name: prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+    ports:
+      - "9090:9090"
+    restart: unless-stopped
+    volumes:
+      - ./prometheus:/etc/prometheus
+      - prom_data:/prometheus
+  grafana:
+    networks:
+      - bridge
+    image: grafana/grafana
+    container_name: grafana
+    ports:
+      - "3000:3000"
+    restart: unless-stopped
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=grafana
+    volumes:
+      - ./grafana:/etc/grafana/provisioning/datasources
+  spring-boot-app:
+    networks:
+      - bridge
+    image: toggle-service
+    container_name: toggle-service
+    ports:
+      - "8080:8080"
+    restart: unless-stopped
+    environment:
+      SERVICE_TYPE: azureBlob
+      AZURE_BLOB_CONNECTION_STRING: ${AZURE_BLOB_CONNECTION_STRING}
+volumes:
+  prom_data:

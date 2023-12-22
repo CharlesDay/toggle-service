@@ -3,6 +3,7 @@ package com.charlie.toggleservice.repositories;
 import com.azure.storage.blob.BlobClient;
 import com.azure.storage.blob.BlobContainerClient;
 import com.azure.storage.blob.BlobServiceClient;
+import com.charlie.toggleservice.config.AzureBlobProperties;
 import com.charlie.toggleservice.model.FeatureToggle;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -21,14 +22,14 @@ public class AzureBlobRepository {
 
     private final BlobServiceClient blobServiceClient;
     private final ObjectMapper objectMapper;
-    private static final String BLOB_CONTAINER_NAME = "toggles";
+
     private final BlobContainerClient blobContainerClient;
 
     @Autowired
-    public AzureBlobRepository(BlobServiceClient blobServiceClient, ObjectMapper objectMapper) {
+    public AzureBlobRepository(BlobServiceClient blobServiceClient, ObjectMapper objectMapper, AzureBlobProperties azureBlobProperties) {
         this.blobServiceClient = blobServiceClient;
         this.objectMapper = objectMapper;
-        this.blobContainerClient = getContainerClient(BLOB_CONTAINER_NAME);
+        this.blobContainerClient = getContainerClient(azureBlobProperties.getContainerName());
     }
 
     private BlobContainerClient getContainerClient(String containerName) {
