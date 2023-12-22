@@ -24,7 +24,6 @@ public class ToggleController {
 
     @Autowired
     public ToggleController(ToggleService toggleService) {
-        System.out.println("In building");
         this.toggleService = toggleService;
     }
 

@@ -1,5 +1,6 @@
 package com.charlie.toggleservice.services;
 
+import com.azure.storage.blob.BlobClient;
 import com.charlie.toggleservice.model.FeatureToggle;
 import com.charlie.toggleservice.model.FeatureToggleCreateRequest;
 import com.charlie.toggleservice.repositories.AzureBlobRepository;
@@ -26,7 +27,8 @@ public class ToggleServiceAzureBlob implements ToggleService {
 
     @Override
     public FeatureToggle createToggle(FeatureToggleCreateRequest createRequest) {
-        return null;
+        FeatureToggle newFeatureToggle = FeatureToggle.builder().name(createRequest.name()).isActive(createRequest.active()).build();
+        return repository.saveIfNotExist(newFeatureToggle);
     }
 
     @Override
@@ -50,6 +52,6 @@ public class ToggleServiceAzureBlob implements ToggleService {
 
     @Override
     public void deleteIfExists(String name) {
-
+        repository.deleteIfExists(name);
     }
 }

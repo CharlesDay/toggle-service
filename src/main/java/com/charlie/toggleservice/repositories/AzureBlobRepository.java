@@ -55,7 +55,25 @@ public class AzureBlobRepository {
 
             byte[] data = objectMapper.writeValueAsString(featureToggle).getBytes(StandardCharsets.UTF_8);
             InputStream inputStream = new ByteArrayInputStream(data);
-            blobClient.delete();
+            blobClient.deleteIfExists();
+            blobClient.upload(inputStream, data.length);
+            return featureToggle;
+        } catch (Exception ex) {
+            log.error("Could not save");
+            return null;
+        }
+    }
+
+    public FeatureToggle saveIfNotExist(FeatureToggle featureToggle) {
+        try {
+            BlobClient blobClient = blobContainerClient.getBlobClient(featureToggle.getName() + ".json");
+
+            if (blobClient.exists()) {
+                return null;
+            }
+            byte[] data = objectMapper.writeValueAsString(featureToggle).getBytes(StandardCharsets.UTF_8);
+            InputStream inputStream = new ByteArrayInputStream(data);
+            blobClient.deleteIfExists();
             blobClient.upload(inputStream, data.length);
             return featureToggle;
         } catch (Exception ex) {
@@ -73,6 +91,11 @@ public class AzureBlobRepository {
                 return null;
             }
         }).filter(Objects::nonNull).collect(Collectors.toList());
+    }
+
+    public void deleteIfExists(String name) {
+        BlobClient blobClient = blobContainerClient.getBlobClient(name + ".json");
+        blobClient.deleteIfExists();
     }
 
     private static Set<String> getAllBlobJson(BlobContainerClient blobContainerClient) {
