@@ -1,4 +1,9 @@
 spring:
+  cloud:
+    azure:
+      cosmos:
+        endpoint: "https://toggles.documents.azure.com:443/"
+        database: ToDoList
   mvc:
     cors:
       allowed-origins=*:
@@ -34,12 +39,20 @@ management:
         include: health,info,metrics,prometheus
 
 toggle:
-  service: ${SERVICE_TYPE:azureBlob} # redis or azureBlob
-
+#  service: ${SERVICE_TYPE:azureBlob} # redis, azureCosmos or azureBlob
+  service: ${SERVICE_TYPE:azureCosmos} # redis, azureCosmos or azureBlob
 azure:
   blob:
     container-name: toggles
     connection-string: ${AZURE_BLOB_CONNECTION_STRING}
+#  cosmosdb:
+#    key: ${COSMOS_DB_KEY}
+#    uri: "https://toggles.documents.azure.com:443/"
+#    database: ToDoList
+  cosmos:
+    key: ${COSMOS_DB_KEY}
+    uri: "https://toggles.documents.azure.com:443/"
+    database: ToDoList
 
 logging:
   level:

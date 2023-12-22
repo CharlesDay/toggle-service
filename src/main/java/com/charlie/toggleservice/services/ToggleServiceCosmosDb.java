@@ -1,57 +1,56 @@
 package com.charlie.toggleservice.services;
 
+import com.azure.cosmos.models.PartitionKey;
 import com.charlie.toggleservice.model.FeatureToggle;
 import com.charlie.toggleservice.model.FeatureToggleCreateRequest;
-import com.charlie.toggleservice.repositories.AzureBlobRepository;
+import com.charlie.toggleservice.repositories.AzureCosmosRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-public class ToggleServiceAzureBlob implements ToggleService {
+public class ToggleServiceCosmosDb implements ToggleService {
 
-    private final AzureBlobRepository repository;
+    private final AzureCosmosRepository repository;
 
     @Autowired
-    public ToggleServiceAzureBlob(AzureBlobRepository repository) {
-        this.repository = repository;
-
+    public ToggleServiceCosmosDb(AzureCosmosRepository azureCosmosRepository) {
+        this.repository = azureCosmosRepository;
     }
 
     @Override
     public Optional<FeatureToggle> getToggleById(String id) {
-        return repository.findById(id);
+        return repository.findById(id, new PartitionKey(id));
     }
 
     @Override
     public FeatureToggle createToggle(FeatureToggleCreateRequest createRequest) {
         FeatureToggle newFeatureToggle = FeatureToggle.builder().name(createRequest.name()).isActive(createRequest.isActive()).build();
-        return repository.saveIfNotExist(newFeatureToggle);
+        return newFeatureToggle;
     }
 
     @Override
     public FeatureToggle toggle(FeatureToggle featureToggle) {
-        featureToggle.toggle();
-        return repository.save(featureToggle);
+        return null;
     }
 
     @Override
     public FeatureToggle findByName(String name) {
-        Optional<FeatureToggle> byId = repository.findById(name);
-        return byId.orElse(null);
+        return repository.findById(name, new PartitionKey(name)).orElse(null);
     }
 
     @Override
     public List<FeatureToggle> findAll() {
-        Iterable<FeatureToggle> all = repository.findAll();
-        List<FeatureToggle> toggles = new ArrayList<>();
-        all.forEach(toggles::add);
-        return toggles;
+        Iterable<FeatureToggle> featureToggles = repository.findAll(new PartitionKey("/name"));
+        List<FeatureToggle> result = new ArrayList<>();
+        featureToggles.forEach(result::add);
+        return result;
     }
 
     @Override
     public void deleteIfExists(String name) {
-        repository.deleteIfExists(name);
+        repository.deleteById(name, new PartitionKey(name));
+
     }
 }

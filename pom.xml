@@ -43,9 +43,24 @@
 			<artifactId>spring-boot-starter-thymeleaf</artifactId>
 		</dependency>
 		<dependency>
+			<groupId>com.azure</groupId>
+			<artifactId>azure-spring-data-cosmos</artifactId>
+			<version>3.32.0</version>
+		</dependency>
+<!--		<dependency>-->
+<!--			<groupId>com.microsoft.azure</groupId>-->
+<!--			<artifactId>azure-cosmosdb</artifactId>-->
+<!--			<version>2.6.16</version>-->
+<!--		</dependency>-->
+		<dependency>
 			<groupId>com.fasterxml.jackson.core</groupId>
 			<artifactId>jackson-databind</artifactId>
 			<version>2.15.1</version>
+		</dependency>
+		<dependency>
+			<groupId>com.microsoft.azure</groupId>
+			<artifactId>spring-data-cosmosdb</artifactId>
+			<version>2.3.1</version>
 		</dependency>
 		<dependency>
 			<groupId>com.azure</groupId>
