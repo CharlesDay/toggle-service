@@ -73,6 +73,7 @@ public class AzureBlobRepository {
             }
             byte[] data = objectMapper.writeValueAsString(featureToggle).getBytes(StandardCharsets.UTF_8);
             InputStream inputStream = new ByteArrayInputStream(data);
+            System.out.println(new String(data));
             blobClient.deleteIfExists();
             blobClient.upload(inputStream, data.length);
             return featureToggle;

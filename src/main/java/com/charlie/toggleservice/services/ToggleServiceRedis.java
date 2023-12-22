@@ -30,7 +30,7 @@ public class ToggleServiceRedis implements ToggleService {
         boolean doesToggleAlreadyExist = toggleRepository.existsById(createRequest.name());
 
         if (!doesToggleAlreadyExist) {
-            FeatureToggle newFeatureToggle = FeatureToggle.builder().name(createRequest.name()).isActive(createRequest.active()).build();
+            FeatureToggle newFeatureToggle = FeatureToggle.builder().name(createRequest.name()).isActive(createRequest.isActive()).build();
             return toggleRepository.save(newFeatureToggle);
         }
         return null;
