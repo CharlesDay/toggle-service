@@ -20,17 +20,29 @@ import java.util.Optional;
 @RequestMapping()
 @Slf4j
 public class ToggleController {
-    @Autowired
     ToggleService toggleService;
+
+    @Autowired
+    public ToggleController(ToggleService toggleService) {
+        System.out.println("In building");
+        this.toggleService = toggleService;
+    }
 
     @GetMapping("/{name}")
     public ResponseEntity<?> getToggle(@PathVariable("name") String name) {
-        FeatureToggle toggleOptional = toggleService.findByName(name);
-        if (toggleOptional != null){
+        FeatureToggle toggle = toggleService.findByName(name);
+        if (toggle == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("There is no toggle matching that name");
         }
 
-        return ResponseEntity.ok().body(toggleOptional);
+        return ResponseEntity.ok().body(toggle);
+    }
+
+    @GetMapping("/")
+    public ResponseEntity<?> getBase() {
+        return ResponseEntity.ok(
+
+        ).body("Hello");
     }
 
 
@@ -58,9 +70,9 @@ public class ToggleController {
         return "redirect:/toggle"; // Redirect back to the toggle form
     }
 
-@PostMapping("/createToggle")
+    @PostMapping("/createToggle")
     public String createNewToggle(@RequestParam("newToggleName") String toggleName, @Nullable @RequestParam("newToggleStatus") boolean active) {
-        if (StringUtils.hasText(toggleName)){
+        if (StringUtils.hasText(toggleName)) {
             FeatureToggleCreateRequest featureToggleCreateRequest = new FeatureToggleCreateRequest(toggleName, active);
             toggleService.createToggle(featureToggleCreateRequest);
         }

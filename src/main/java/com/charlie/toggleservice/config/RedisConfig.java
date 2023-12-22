@@ -1,5 +1,8 @@
 package com.charlie.toggleservice.config;
 
+import com.charlie.toggleservice.repositories.ToggleRepository;
+import com.charlie.toggleservice.services.ToggleService;
+import com.charlie.toggleservice.services.ToggleServiceRedis;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.data.redis.RedisAutoConfiguration;
 import org.springframework.cache.annotation.EnableCaching;
@@ -15,7 +18,7 @@ import org.springframework.data.redis.serializer.StringRedisSerializer;
 @Configuration
 @EnableCaching
 @EnableRedisRepositories
-@ConditionalOnProperty(value = "spring.cache.type", havingValue = "redis")
+@ConditionalOnProperty(value = "toggle.service", havingValue = "redis")
 @Import(RedisAutoConfiguration.class)
 public class RedisConfig {
 
@@ -27,5 +30,10 @@ public class RedisConfig {
         template.setKeySerializer(new StringRedisSerializer());
         template.setKeySerializer(new JdkSerializationRedisSerializer());
         return template;
+    }
+
+    @Bean
+    public ToggleService toggleService(ToggleRepository toggleRepository) {
+        return new ToggleServiceRedis(toggleRepository);
     }
 }

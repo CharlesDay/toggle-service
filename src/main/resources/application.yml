@@ -6,3 +6,10 @@ spring:
   autoconfigure:
     exclude:
       - org.springframework.boot.autoconfigure.data.redis.RedisAutoConfiguration
+
+toggle:
+  service: azureBlob # redis or azureBlob
+
+logging:
+  level:
+    root=INFO:
