@@ -5,6 +5,7 @@ import com.charlie.toggleservice.model.FeatureToggleCreateRequest;
 import com.charlie.toggleservice.repositories.AzureBlobRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -30,7 +31,8 @@ public class ToggleServiceAzureBlob implements ToggleService {
 
     @Override
     public FeatureToggle toggle(FeatureToggle featureToggle) {
-        return null;
+        featureToggle.toggle();
+        return repository.save(featureToggle);
     }
 
     @Override
@@ -41,8 +43,10 @@ public class ToggleServiceAzureBlob implements ToggleService {
 
     @Override
     public List<FeatureToggle> findAll() {
-        return null;
-    }
+        Iterable<FeatureToggle> all = repository.findAll();
+        List<FeatureToggle> toggles = new ArrayList<>();
+        all.forEach(toggles::add);
+        return toggles;    }
 
     @Override
     public void deleteIfExists(String name) {
