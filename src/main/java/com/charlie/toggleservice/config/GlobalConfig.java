@@ -1,7 +1,6 @@
 package com.charlie.toggleservice.config;
 
 import com.azure.cosmos.CosmosClientBuilder;
-import com.azure.data.cosmos.CosmosKeyCredential;
 import com.azure.spring.data.cosmos.config.AbstractCosmosConfiguration;
 import com.azure.spring.data.cosmos.repository.config.EnableCosmosRepositories;
 import com.azure.storage.blob.BlobServiceClient;
@@ -20,9 +19,6 @@ public class GlobalConfig extends AbstractCosmosConfiguration {
     @Autowired
     AzureCosmosProperties azureCosmosProperties;
 
-    private CosmosKeyCredential cosmosKeyCredential;
-
-
     @Bean
     public BlobServiceClient blobServiceClient() {
         return new BlobServiceClientBuilder().connectionString(azureBlobProperties.getConnectionString()).buildClient();
@@ -34,12 +30,6 @@ public class GlobalConfig extends AbstractCosmosConfiguration {
                 .endpoint(azureCosmosProperties.getUri())
                 .key(azureCosmosProperties.getKey());
     }
-
-//    @Bean
-//    public CosmosClientBuilder getConfig() {
-//        this.cosmosKeyCredential = new CosmosKeyCredential(azureCosmosProperties.getKey());
-//        return CosmosDBConfig.builder(azureCosmosProperties.getUri(), this.cosmosKeyCredential, getDatabaseName());
-//    }
 
     @Override
     protected String getDatabaseName() {
